@@ -614,7 +614,10 @@
 			
 		eachReturn = this.each(function(){
 			if(args && typeof args[0] === 'string'){
-				var data = EasyDropDown.prototype.instances[this.id][args[0]](args[1], args[2]);
+				var data = EasyDropDown.prototype.instances[this.id][args[0]];
+				if ($.isFunction(data)) {
+					data = EasyDropDown.prototype.instances[this.id][args[0]](args[1], args[2]);
+				}
 				if(data)dataReturn.push(data);
 			} else {
 				instantiate(this, args[0]);
