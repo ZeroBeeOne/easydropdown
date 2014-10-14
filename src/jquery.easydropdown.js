@@ -561,6 +561,37 @@
 			self.disabled = false;
 			self.$container.removeClass('disabled');
 			self.$select.attr('disabled',false);
+		},
+
+		reset: function(){
+			var self = this, active = self.hasLabel ? self.label : self.options[0].title;
+			
+			// Set the text back to the original label/top option
+			self.$active.text(active);
+
+			// Remove the selected class
+			self.$container.removeClass('selected');
+			
+			// Reset the selected property of the EasyDropDown
+			self.selected = [{
+				index: 0,
+				title: active
+			}];
+			if (!self.multiple) {
+				self.selected = self.selected[0];
+			}
+
+			// Deactivate the items in the EasyDropDown
+			self.$items.filter('.active').removeClass('active');
+
+			// Defocus any focused item
+			self.$items.filter('.focus').removeClass('focus');
+
+			// De-select the options in the original dropdown.
+			self.$select.find('option').filter(':selected').prop('selected',false)
+
+			// Close the dropdown
+			self.close();
 		}
 	};
 	
