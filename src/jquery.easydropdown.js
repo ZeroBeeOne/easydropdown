@@ -462,6 +462,20 @@
 				}
 			}
 
+			if (this.multiple) {
+				if (this.selected && this.selected.length > 0) {
+					self.$container.addClass('selected');
+				} else {
+					self.$container.removeClass('selected');
+				}
+			} else {
+				if (this.selected && this.selected.index > 0) {
+					self.$container.addClass('selected');
+				} else {
+					self.$container.removeClass('selected');
+				}
+			}
+
 			self.focusIndex = i;
 
 			self.$active.text(self.getSelectionText());
