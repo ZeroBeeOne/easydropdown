@@ -169,6 +169,8 @@
 			});
 			self.$select.on({
 				change: function(){
+					// Deselect any labels which may be selected already first
+					$(this).find('option.label:selected').prop('selected',false);
 					var	$selected = $(this).find('option:selected'),
 						title = $selected.text(),
 						value = $selected.val(),
