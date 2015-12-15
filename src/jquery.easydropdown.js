@@ -1,4 +1,4 @@
-/*
+//*
 * EASYDROPDOWN - A Drop-down Builder for Styleable Inputs and Menus
 * Version: 2.1.4
 * License: Creative Commons Attribution 3.0 Unported - CC BY 3.0
@@ -31,6 +31,7 @@
 		init: function(domNode, settings){
 			var	self = this;
 			
+			self.passedOptions = settings;
 			$.extend(self, settings);
 			self.$select = $(domNode);
 			self.id = domNode.id;
@@ -66,7 +67,8 @@
 							domNode: $option[0],
 							title: $option.text(),
 							value: $option.val(),
-							selected: $option.is(':selected')
+							selected: $option.is(':selected'),
+							disabled: $option.is(':disabled')
 						});
 					};
 				});
@@ -100,8 +102,16 @@
 			self.$form = self.$container.closest('form');
 			$.each(self.options, function(){
 				var	option = this,
-					active = option.selected ? ' class="active"':'';
-				self.$dropDown.append('<li'+active+'>'+option.title+'</li>');
+					classes = [];
+
+				if (option.selected) {
+					classes.push('active');
+				}
+				if (option.disabled) {
+					classes.push('disabled');
+				}
+				classes = classes.length > 0 ? ' class="' + classes.join(' ') +  '"':'';
+				self.$dropDown.append('<li'+classes+'>'+option.title+'</li>');
 			});
 			self.$items = self.$dropDown.find('li');
 
@@ -256,8 +266,12 @@
 			});
 
 			self.$items.on({
-				'click.easyDropDown': function(){
+				'click.easyDropDown': function(e){
 					var index = $(this).index();
+					if (self.options[index].disabled) {
+						e.stopPropagation();
+						return false;
+					}
 					self.select(index);
 					self.$select.focus();
 				},
@@ -287,16 +301,23 @@
 				'keydown.easyDropDown': function(e){
 					if(self.inFocus){
 						self.keyboardMode = true;
-						var key = e.keyCode;
+						var key = e.keyCode,
+							i = 0;
 
 						if(key == 38 || key == 40 || key == 32){
 							e.preventDefault();
 							if(key == 38){
-								self.focusIndex--
-								self.focusIndex = self.focusIndex < 0 ? self.$items.length - 1 : self.focusIndex;
+								do {
+									self.focusIndex--
+									self.focusIndex = self.focusIndex < 0 ? self.$items.length - 1 : self.focusIndex;
+									i++;
+								} while (self.$items.eq(self.focusIndex).hasClass('disabled') && self.$items.length > i); // Keep moving until we find a non-disabled item or we have gone through all the items
 							} else if(key == 40){
-								self.focusIndex++
-								self.focusIndex = self.focusIndex > self.$items.length - 1 ? 0 : self.focusIndex;
+								do {
+									self.focusIndex++
+									self.focusIndex = self.focusIndex > self.$items.length - 1 ? 0 : self.focusIndex;
+									i++;
+								} while (self.$items.eq(self.focusIndex).hasClass('disabled') && self.$items.length > i); // Keep moving until we find a non-disabled item or we have gone through all the items
 							};
 							if(!self.down){
 								self.open();
@@ -418,6 +439,10 @@
 					title: option.title
 				}, i, alreadyOn;
 
+			if (option.disabled) {
+				return;
+			}
+
 			if (!this.multiple) {
 				self.$items.removeClass('active');
 				allOptions.removeAttr('selected');
@@ -502,6 +527,9 @@
 				
 			for(i = 0; i < self.options.length; i++){
 				var title = getTitle(i);
+				if (self.options[i].disabled) {
+					break;
+				}
 				if(title.indexOf(self.query) == 0){
 					lock(i);
 					return;
@@ -510,6 +538,9 @@
 			
 			for(i = 0; i < self.options.length; i++){
 				var title = getTitle(i);
+				if (self.options[i].disabled) {
+					break;
+				}
 				if(title.indexOf(self.query) > -1){
 					lock(i);
 					break;
