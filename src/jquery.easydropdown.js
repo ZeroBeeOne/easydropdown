@@ -493,7 +493,7 @@
 			}
 
 			if (this.multiple) {
-				if (this.selected && this.selected.length > 0) {
+				if (this.selected && jQuery.grep(this.selected, function(el, i){ return el.index > 0; }).length > 0) {
 					self.$container.addClass('selected');
 				} else {
 					self.$container.removeClass('selected');
