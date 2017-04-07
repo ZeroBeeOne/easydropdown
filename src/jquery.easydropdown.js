@@ -195,6 +195,8 @@
 
 					self.selected = self.multiple ? selectedArr : selectedArr[0];
 
+					self.setSelectedClass();
+
 					self.$active.text(self.getSelectionText());
 
 					self.fireChangeCallback();
@@ -492,25 +494,29 @@
 				}
 			}
 
-			if (this.multiple) {
-				if (this.selected && jQuery.grep(this.selected, function(el, i){ return el.index > 0; }).length > 0) {
-					self.$container.addClass('selected');
-				} else {
-					self.$container.removeClass('selected');
-				}
-			} else {
-				if (this.selected && this.selected.index > 0) {
-					self.$container.addClass('selected');
-				} else {
-					self.$container.removeClass('selected');
-				}
-			}
+			self.setSelectedClass();
 
 			self.focusIndex = i;
 
 			self.$active.text(self.getSelectionText());
 
 			self.fireChangeCallback();
+		},
+
+		setSelectedClass : function(){
+			if (this.multiple) {
+				if (this.selected && jQuery.grep(this.selected, function(el, i){ return el.index > 0; }).length > 0) {
+					this.$container.addClass('selected');
+				} else {
+					this.$container.removeClass('selected');
+				}
+			} else {
+				if (this.selected && this.selected.index > 0) {
+					this.$container.addClass('selected');
+				} else {
+					this.$container.removeClass('selected');
+				}
+			}
 		},
 
 		deselect: function(index){
