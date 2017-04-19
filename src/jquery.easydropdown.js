@@ -173,7 +173,8 @@
 		},
 		
 		bindTouchHandlers: function(){
-			var	self = this;
+			var	self = this,
+				$label;
 			self.$container.on('click.easyDropDown',function(){
 				self.$select.focus();
 			});
@@ -189,7 +190,7 @@
 					$selected.each(function(idx, el) {
 						selectedArr.push({
 							title : $(el).text(),
-							index : $(el).index()
+							index : $(el).index() + (!this.hasLabel ? 1 : 0)
 						});
 					});
 
@@ -202,10 +203,14 @@
 					self.fireChangeCallback();
 				},
 				focus: function(){
+					$label = self.$select.find('.label').prop('disabled', true);
 					self.$container.addClass('focus');
 				},
 				blur: function(){
 					self.$container.removeClass('focus');
+					if ($label && $label.length > 0) {
+						$label.prop('disabled', false);
+					}
 				}
 			});
 		},
